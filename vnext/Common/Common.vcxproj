@@ -8,8 +8,10 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(ReactNativeWindowsDir)PropertySheets\React.Cpp.props" />
+
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -36,46 +38,72 @@
       <Platform>ARM64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='ARM64'">
+    <PlatformToolset>v143</PlatformToolset>
+    <TargetMachine>ARM64</TargetMachine>
+    <PlatformTarget>ARM64</PlatformTarget>
+  </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <!-- Include Warnings.props after Microsoft.Cpp.props to change default WarningLevel -->
   <Import Project="$(ReactNativeWindowsDir)PropertySheets\Warnings.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
+
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"
+            Label="LocalAppDataPlatform" />
   </ImportGroup>
+
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
+
+  <!-- Global fallback -->
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <!-- /Zc:strictStrings enforces the standard C++ const qualifications for
-      string literals. It prevents code like
-        wchar_t* str = L"hello";
-      from compiling. -->
-      <AdditionalOptions>%(AdditionalOptions) /Zc:strictStrings</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:strictStrings /FS</AdditionalOptions>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
   </ItemDefinitionGroup>
+
+  <!-- ARM64-specific build config -->
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:strictStrings /FS</AdditionalOptions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <TargetMachine>ARM64</TargetMachine>
+    </ClCompile>
+    <Link>
+      <TargetMachine>ARM64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- Debug config -->
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='DebugBundle'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
+
   <ItemGroup>
     <ClCompile Include="Unicode.cpp" />
   </ItemGroup>
@@ -83,8 +111,8 @@
     <ClInclude Include="Unicode.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
   <Target Name="Deploy" />
 </Project>
